@@ -41,6 +41,7 @@
           var maxFontSize = attrs.fittextMax || config.max || Number.POSITIVE_INFINITY;
 
           var resizer = function() {
+            console.info('delay: ' + loadDelay)
             element[0].style.fontSize = '10px';
             var ratio = element[0].offsetHeight / element[0].offsetWidth / nl;
             element[0].style.fontSize = Math.max(
@@ -51,13 +52,19 @@
             ) + 'px';
           };
 
-          $timeout( function() { resizer() }, loadDelay);
+          $timeout( function() { resizer();$timeout(function() {resizer();},100) }, loadDelay);
 
-          scope.$watch(attrs.ngModel, function() { resizer() });
+          scope.$watch(attrs.ngModel, function() { resizer(); $timeout(function() {resizer();},100) });
 
           config.debounce
-            ? angular.element(window).bind('resize', config.debounce(function(){ scope.$apply(resizer)}, config.delay))
-            : angular.element(window).bind('resize', function(){ scope.$apply(resizer)});
+            ? angular.element(window).bind('resize', config.debounce(function(){ scope.$apply(function() {
+             resizer();
+             $timeout(function() {resizer();},100)
+            })}, config.delay))
+            : angular.element(window).bind('resize', function(){ scope.$apply(function() {
+             resizer();
+             $timeout(function() {resizer();},100)
+            })});
         }
       }
     }])
