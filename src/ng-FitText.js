@@ -41,12 +41,15 @@
           var maxFontSize = attrs.fittextMax || config.max || Number.POSITIVE_INFINITY;
 
           var resizer = function() {
-            console.info('delay: ' + loadDelay)
+            var usedMaxFontSize = maxFontSize;
+            if(window.innerWidth < 1024) {
+              usedMaxFontSize = 30;
+            }
             element[0].style.fontSize = '10px';
             var ratio = element[0].offsetHeight / element[0].offsetWidth / nl;
             element[0].style.fontSize = Math.max(
               Math.min((parent[0].offsetWidth - 6) * ratio * compressor,
-                parseFloat(maxFontSize)
+                parseFloat(usedMaxFontSize)
               ),
               parseFloat(minFontSize)
             ) + 'px';
